@@ -46,8 +46,10 @@ public class WebConfig {
     @Value("${jwt.private.key}")
     RSAPrivateKey privateKey;
     public static final String[] PUBLIC_PATHS = {"/api/auth/**",
+            "/v3/api-docs**",
             "/v3/api-docs/**",
-            "/swagger-ui/**"};
+            "/swagger-ui/**",
+            "/swagger-ui.html"};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
@@ -55,7 +57,7 @@ public class WebConfig {
                 .authorizeHttpRequests()
                     .requestMatchers(PUBLIC_PATHS).permitAll()
                     .anyRequest().hasAuthority("SCOPE_ROLE_ADMIN").and()
-                .csrf((csrf) -> csrf.ignoringRequestMatchers(PUBLIC_PATHS))
+                .csrf().disable()
                 .httpBasic().disable()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
