@@ -46,7 +46,7 @@ public class WebConfig {
     @Value("${jwt.private.key}")
     RSAPrivateKey privateKey;
     public static final String[] PUBLIC_PATHS = {"/api/auth/**",
-            "/v3/api-docs**",
+            "/v3/api-docs.yaml",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html"};
