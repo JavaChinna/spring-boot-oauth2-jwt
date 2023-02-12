@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +33,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 /**
  * Configuration for the main application.
  *
@@ -50,6 +53,26 @@ public class WebConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html"};
+
+    /**
+     * This additional (optional) configuration enables basic auth only for the /token endpoint.
+     * It can be removed if basic auth is not required for specific endpoints like /token.
+     */
+    @Bean
+    @Order(1)
+    public SecurityFilterChain basicAuthSecurityFilterChain(HttpSecurity http) throws Exception {
+        // @formatter:off
+        http
+                .securityMatcher("/api/auth/token")
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().authenticated()
+                )
+                .csrf().disable()
+                .httpBasic(withDefaults());
+        // @formatter:on
+        return http.build();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
